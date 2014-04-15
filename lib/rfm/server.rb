@@ -296,7 +296,7 @@ module Rfm
         response = response.start { |http| http.request(request) }
         if state[:log_responses]
           response.to_hash.each { |key, value| warn "#{key}: #{value}" }
-          warn response.body
+          warn response.body.to_s.encode('UTF-8', {invalid: :replace, undef: :replace, replace: '?'})
         end
 
         parse_response(response, limit)
