@@ -79,15 +79,24 @@ module Rfm
         case self.result
         when "text"      then value
         when "number"    then BigDecimal.new(value)
-        when "date"      then Date.strptime(value, resultset.date_format)
+        when "date"      then valid_date(value, resultset.date_format)
         when "time"      then DateTime.strptime("1/1/-4712 #{value}", "%m/%d/%Y #{resultset.time_format}")
         when "timestamp" then DateTime.strptime(value, resultset.timestamp_format)
         when "container" then URI.parse("#{resultset.server.uri.scheme}://#{resultset.server.uri.host}:#{resultset.server.uri.port}#{value}")
         else nil
         end
-
       end
 
+      def valid_date(value, date_format)
+        date = ""
+        begin
+          date = Date.strptime(value, date_format)
+        rescue
+          # Invalid date
+          return ""
+        end
+        date
+      end
     end
   end
 end
